@@ -1,8 +1,35 @@
 "use strict";
 
+let debug = true;
+const box = document.getElementById('box')
 
-alert()
-var request = window.navigator.mozContacts.getAll(filter);
+
+document.querySelector("input").focus();
+
+let tab_index = 0
+
+function nav(move) {
+
+    if (move == "+1") {
+        tab_index++
+        document.querySelector('[tabindex="' + tab_index + '"]').focus();
+    }
+    if (move == "-1") {
+        tab_index--
+        document.querySelector('[tabindex="' + tab_index + '"]').focus();
+    }
+
+
+
+}
+
+
+
+
+var request = window.navigator.mozContacts.getAll({
+    sortBy: "familyName",
+    sortOrder: "descending"
+});
 var count = 0;
 
 request.onsuccess = function() {
@@ -12,20 +39,22 @@ request.onsuccess = function() {
         // Display the name of the contact
         console.log("Name of Contact" + this.result.name);
 
-        // Display the Mobile number of the contact
-        console.log("Number of Contact" + this.result.tel[0].value);
+        let jack = document.createElement('div')
+        jack.innerText = this.result.name
+        jack.setAttribute("tabindex", count);
+        box.appendChild(jack)
 
 
         // Move to the next contact which will call the request.onsuccess with a new result
         this.continue();
 
     } else {
-        alert(count + 'contacts found.');
+        //alert(count + 'contacts found.');
     }
 }
 
 request.onerror = function() {
-    console.log('Something goes wrong!');
+    alert('Something goes wrong!');
 }
 
 
@@ -68,9 +97,11 @@ $(document).ready(function() {
                 break;
 
             case 'ArrowDown':
+                nav("+1")
                 break;
 
             case 'ArrowUp':
+                nav("-1")
                 break;
 
         }

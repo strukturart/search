@@ -2,7 +2,7 @@
 
 :root {
     --color-one: black;
-    --color-two: yellow;
+    --color-two: white;
     --color-three: silver;
 
 }
@@ -63,7 +63,31 @@ div#wrapper {
     min-height: 100%;
     min-width: 100%;
     position: relative;
+    background: var(--color-two);
+
 }
+
+form {
+    padding: 5px;
+    background: var(--color-two);
+
+}
+
+div#box {
+    padding: 5px;
+}
+
+div#box div {
+    padding: 5px;
+    background: var(--color-three);
+}
+
+div#box div:focus {
+    padding: 5px;
+    background: var(--color-two);
+}
+
+
 
 
 /*///////////////////////////
@@ -119,18 +143,4 @@ input#search {
 .autocomplete-group strong {
     display: block;
     border-bottom: 1px solid #000;
-}
-
-
-
-
-
-/* KaiOS portrait devices (240x320) */
-@media only screen and (orientation : portrait) {
-    /* styles */
-}
-
-/* KaiOS landscape devices (320x240) */
-@media screen and (orientation: landscape) {
-    /* styles */
 }

@@ -1,1 +1,1 @@
-qwant-search
+KaiOs-Search

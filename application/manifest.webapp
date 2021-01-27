@@ -23,8 +23,8 @@
 
 	"permissions": 
 	{
-		"contacts":"readcreate",
-
+		"contacts":{"access":"readwrite"},
+		
 		"spatialnavigation-app-manage": {
 		"navigator.spatialNavigationEnabled": false
 		},

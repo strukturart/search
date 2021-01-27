@@ -1,0 +1,40 @@
+{
+	"version": "1.0.0",
+	"name": "search",
+	"description": "search app for KaiOs",
+	"launch_path": "/index.html",
+	"type": "privileged",
+	"fullscreen": "true",
+
+
+
+	"icons": {
+		"56": "/icons/icon-56-56.png",
+		"112": "/icons/icon-112-112.png"
+	},
+	
+	"developer": 
+	{
+		"name": "strukturart",
+		"url": "https://github.com/strukturart/qwant-search"
+	},
+
+	
+
+	"permissions": 
+	{
+		"contacts":"readcreate",
+
+		"spatialnavigation-app-manage": {
+		"navigator.spatialNavigationEnabled": false
+		},
+
+		"systemXHR": {
+		"description": "Required to load remote content"
+		}
+
+	}
+
+
+ 
+}

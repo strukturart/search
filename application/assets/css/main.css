@@ -23,6 +23,12 @@
     display: none !Important;
 }
 
+select,
+option {
+    border: 0 none;
+    outline: 1px none;
+}
+
 
 html,
 body {
@@ -77,19 +83,21 @@ form {
 form input {
     padding: 5px;
     background: var(--color-two);
+    width: 90%;
 
 }
 
-div#box {
+div#box ul {
     padding: 5px;
 }
 
-div#box div {
+div#box ul li {
     padding: 5px;
+    margin: 0 0 5px 0;
     background: var(--color-three);
 }
 
-div#box div:focus {
+div#box ul li:focus {
     padding: 5px;
     background: var(--color-two);
 }
@@ -110,6 +118,7 @@ div#toast {
     z-index: 5000;
     min-width: 100%;
     padding: 5px;
+    display: none;
 }
 
 /*/////////////////

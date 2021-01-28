@@ -2,17 +2,18 @@
 
 let debug = true;
 let count = 0;
+let listObj;
+let tab_index = 0
+const box = document.getElementById('box-list')
 
-const box = document.getElementById('box')
-
-
+//focus input field on start
 document.querySelector("input").focus();
 
-let tab_index = 0
 
 function nav(move) {
 
-    if (move == "+1" && tab_index < count) {
+    let list_count = document.querySelectorAll('li').length
+    if (move == "+1" && tab_index < list_count) {
         tab_index++
         document.querySelector('[tabindex="' + tab_index + '"]').focus();
 
@@ -22,9 +23,11 @@ function nav(move) {
             top: scrollDiv,
             behavior: 'smooth'
         });
+
     }
     if (move == "-1" && tab_index > 0) {
         tab_index--
+
         document.querySelector('[tabindex="' + tab_index + '"]').focus();
 
 
@@ -33,6 +36,7 @@ function nav(move) {
             top: scrollDiv,
             behavior: 'smooth'
         });
+
     }
 
 
@@ -40,45 +44,79 @@ function nav(move) {
 }
 
 
+//add tabindex attr dyn.
+let divs;
+let i;
+
+let set_tabindex = function() {
+    divs = document.querySelectorAll('li')
+    for (i = 0; i < divs.length; ++i) {
+        divs[i].tabIndex = i + 1
+    }
+}
+
+
 ///////
 //list all contacts
 /////
 
-let search_list = function(term) {
+let search_list = function() {
+    count = 0;
 
-    if (!window.navigator.mozContacts) return false;
+    let a;
+    let b;
+
+    if (!window.navigator.mozContacts) {
+        console.log("fail")
+        return false;
+    }
     var request = window.navigator.mozContacts.getAll({
         sortBy: "familyName",
         sortOrder: "descending"
     });
 
+
     request.onsuccess = function() {
         if (this.result) {
             count++;
+            // Display the name of the contact
+            a = document.createElement('li')
+            //a.setAttribute("tabindex", count);
 
-            if (term != "") {
 
-                if (this.result.name.includes(term)) {
-                    let jack = document.createElement('div')
-                    jack.innerText = this.result.name
-                    jack.setAttribute("tabindex", count);
-                    box.appendChild(jack)
-                }
+            b = document.createElement('div')
+            b.setAttribute("class", "name");
+            b.innerText = this.result.name
 
-            } else {
+            a.appendChild(b)
+            box.appendChild(a)
 
-                // Display the name of the contact
-                let jack = document.createElement('div')
-                jack.innerText = this.result.name
-                jack.setAttribute("tabindex", count);
-                box.appendChild(jack)
-            }
 
-            // Move to the next contact which will call the request.onsuccess with a new result
             this.continue();
 
         } else {
-            //alert(count + 'contacts found.');
+            //alert("No more contacts");
+
+
+            var options = {
+                valueNames: ['name'],
+                fuzzySearch: {
+                    searchClass: "fuzzy-search",
+                    location: 0,
+                    distance: 100,
+                    threshold: 0.1,
+                    multiSearch: true
+                }
+            };
+
+            listObj = new List('box', options);
+            listObj.on("searchComplete", function() {
+                set_tabindex();
+            })
+
+            set_tabindex();
+
+
         }
     }
 
@@ -89,15 +127,35 @@ let search_list = function(term) {
 
 }
 
-search_list("")
+search_list()
+bottom_bar("", "", "")
 
 
 
+//trigger live search
+let live_search_trigger;
+let search = document.getElementById('search')
+
+search.addEventListener("focus", start);
+search.addEventListener("blur", end);
 
 
+function start() {
+    window.scrollTo(0, 0);
+    live_search_trigger = setInterval(() => {
+
+        if (search.value != "") {
+            listObj.fuzzySearch(search.value);
+
+        }
+        if (search.value == "") listObj.search();
+    }, 1500);
+}
 
 
-
+function end() {
+    clearInterval(live_search_trigger);
+}
 
 
 
@@ -108,30 +166,14 @@ search_list("")
 function handleKeyDown(evt)
 
 
-
 {
-    if (document.activeElement.id == "search") {
-        toaster(document.activeElement.value, 3000)
 
-
-        while (box.firstChild) {
-            box.removeChild(box.firstChild);
-        }
-
-
-
-        search_list(document.activeElement.value)
-
-
-
-
-
-    }
 
     switch (evt.key) {
 
 
         case 'Enter':
+            evt.preventDefault();
             break;
 
         case 'Backspace':
@@ -150,6 +192,13 @@ function handleKeyDown(evt)
             nav("-1")
             break;
 
+        default:
+            break;
+
+
+
+
+
     }
 }
 
@@ -166,7 +215,6 @@ document.addEventListener('keydown', handleKeyDown);
 //////////////////
 
 $(document).ready(function() {
-
 
 
 

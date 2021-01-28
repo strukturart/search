@@ -3,15 +3,9 @@
 
 <head>
 
-    <title>Translator</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src https://en.wikipedia.org/* 'self'">
-
-
-
-
+    <title>Search</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
     <link rel="stylesheet" href="assets/css/main.css" />
     <link rel="stylesheet" href="assets/css/grid.css" />
 
@@ -31,13 +25,12 @@
         <!--Main---------->
         <!---------------->
 
-        <div id="main" class="width-100">
-            <form class="flex justify-content-center width-100" id="search-form">
-                <input required type="search" autofocus tabindex="0" placeholder="search" id="search">
+        <div id="box">
+            <form>
+                <input type="search" tabindex="0" id="search" class="fuzzy-search" />
             </form>
-
-            <div id="box">
-            </div>
+            <ul class="list" id="box-list">
+            </ul>
         </div>
 
 
@@ -66,6 +59,7 @@
 
 <script defer src="assets/js/jQuery-3.1.0.js"></script>
 <script defer src="assets/js/helper.js"></script>
+<script defer src="assets/js/list.js"></script>
 <script defer src="assets/js/moments.min.js"></script>
 <script defer src="assets/js/script.js"></script>
 

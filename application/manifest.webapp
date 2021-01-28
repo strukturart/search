@@ -5,6 +5,8 @@
 	"launch_path": "/index.html",
 	"type": "privileged",
 	"fullscreen": "true",
+	 "role": "input",
+
 
 
 
@@ -31,7 +33,11 @@
 
 		"systemXHR": {
 		"description": "Required to load remote content"
-		}
+		},
+
+		"softkey":{},
+		"customization":{},
+		"input":{}
 
 	}
 

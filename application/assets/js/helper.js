@@ -110,12 +110,33 @@ function toaster(text, time) {
 }
 
 
-function share(url) {
-    var activity = new MozActivity({
-        name: "share",
+function sms(number) {
+
+
+    let sms = new MozActivity({
+        name: "new",
         data: {
-            type: "url",
-            url: url
+            type: "websms/sms",
+            number: number,
+        }
+    })
+
+    sms.onsuccess = function() {
+
+    };
+
+    sms.onerror = function() {
+        alert("The activity encounter en error: " + this.error);
+    };
+
+}
+
+function call(number) {
+    let activity = new MozActivity({
+        name: "dial",
+        data: {
+            type: "webtelephony/number",
+            number: number,
         }
     });
 
@@ -124,9 +145,10 @@ function share(url) {
     };
 
     activity.onerror = function() {
-        console.log("The activity encounter en error: " + this.error);
+        alert("The activity encounter en error: " + this.error);
     };
 }
+
 
 
 

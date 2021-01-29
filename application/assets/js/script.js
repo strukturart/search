@@ -4,34 +4,76 @@ let debug = true;
 let count = 0;
 let listObj;
 let tab_index = 0
+let tab_index_last;
+let init = false;
+let status = "search"
 const box = document.getElementById('box-list')
 
-//focus input field on start
-document.querySelector("input").focus();
 
 
 function nav(move) {
 
-    let list_count = document.querySelectorAll('li').length
-    if (move == "+1" && tab_index < list_count) {
+
+    let elem = document.activeElement;
+
+    // Setup siblings array and get the first sibling
+    var siblings = [];
+
+    if (elem.id == "search") {
+        document.querySelector("li[tabindex='0']").focus()
+        return false;
+    }
+    if (elem.id != "search") {
+
+        var sibling = elem.parentNode.firstChild;
+
+        // Loop through each sibling and push to the array
+        while (sibling) {
+            if (sibling.hasAttribute("tabindex")) {
+                siblings.push(sibling);
+            }
+            sibling = sibling.nextSibling;
+        }
+    }
+
+
+
+
+
+    if (move == "+1" && init && tab_index < siblings.length - 1) {
+
+
+
+
         tab_index++
-        document.querySelector('[tabindex="' + tab_index + '"]').focus();
+        //document.querySelector('[tabindex="' + tab_index + '"]').focus();
+        siblings[tab_index].focus()
 
 
-        var scrollDiv = document.querySelector('[tabindex="' + tab_index + '"]').offsetTop;
+        //var scrollDiv = document.querySelector('[tabindex="' + tab_index + '"]').offsetTop;
+        var scrollDiv = siblings[tab_index].offsetTop;
         window.scrollTo({
             top: scrollDiv,
             behavior: 'smooth'
         });
 
     }
-    if (move == "-1" && tab_index > 0) {
+    if (move == "-1" && tab_index > -1) {
+
+        //search field 
+        if (document.activeElement == document.querySelector("ul li:first-child")) {
+            document.querySelector("input#search").focus()
+            return false;
+        }
+
         tab_index--
 
-        document.querySelector('[tabindex="' + tab_index + '"]').focus();
 
 
-        var scrollDiv = document.querySelector('[tabindex="' + tab_index + '"]').offsetTop;
+        siblings[tab_index].focus()
+
+
+        var scrollDiv = siblings[tab_index].offsetTop;
         window.scrollTo({
             top: scrollDiv,
             behavior: 'smooth'
@@ -51,7 +93,7 @@ let i;
 let set_tabindex = function() {
     divs = document.querySelectorAll('li')
     for (i = 0; i < divs.length; ++i) {
-        divs[i].tabIndex = i + 1
+        divs[i].tabIndex = i
     }
 }
 
@@ -81,12 +123,11 @@ let search_list = function() {
             count++;
             // Display the name of the contact
             a = document.createElement('li')
-            //a.setAttribute("tabindex", count);
-
-
             b = document.createElement('div')
             b.setAttribute("class", "name");
+            b.setAttribute("data-id", this.result.id);
             b.innerText = this.result.name
+
 
             a.appendChild(b)
             box.appendChild(a)
@@ -114,7 +155,8 @@ let search_list = function() {
                 set_tabindex();
             })
 
-            set_tabindex();
+            init = true;
+            document.getElementById('search').focus();
 
 
         }
@@ -142,6 +184,8 @@ search.addEventListener("blur", end);
 
 function start() {
     window.scrollTo(0, 0);
+    bottom_bar("", "", "")
+
     live_search_trigger = setInterval(() => {
 
         if (search.value != "") {
@@ -155,10 +199,87 @@ function start() {
 
 function end() {
     clearInterval(live_search_trigger);
+    bottom_bar("", "select", "")
+
 }
 
 
+let view_contacts = function() {
+    tab_index = tab_index_last;
+    document.querySelector("ul#box-list li[tabindex='" + tab_index + "']").focus()
+    bottom_bar("", "select", "")
 
+    document.getElementById("content-box").style.display = "none"
+    status = "search";
+
+}
+
+
+///////
+//open single contact
+///////
+
+let open_contact = function() {
+    tab_index_last = tab_index;
+    let c_id = document.activeElement.firstChild.getAttribute("data-id")
+    var options = {
+        filterValue: c_id,
+        filterBy: ["id"],
+        filterOp: "equals"
+
+    }
+
+    var search = window.navigator.mozContacts.find(options);
+
+    search.onsuccess = function() {
+
+        let content_a;
+        let content = document.getElementById("content")
+        content.innerHTML = "";
+        tab_index = 0
+        let p;
+
+        if (search.result.length === 1) {
+            var person = search.result[0];
+
+            if (person.tel.length == 0) {
+                alert("this contact does not contain a phone number")
+                return false;
+            }
+            //alert("Found:" + person.givenName[0] + " " + person.familyName[0]);
+            //alert(JSON.stringify(person.tel))
+            //alert(person.tel[0].value)
+            for (let i = 0; i < person.tel.length; i++) {
+                p = person.tel[i].value;
+                //p.toString();
+                //replace whitespace
+                p = p.replace(/\s+/g, '');
+
+                content_a = document.createElement('li')
+                content_a.setAttribute("class", "content-item");
+                content_a.setAttribute("data-number", p);
+                content_a.innerText = p
+                content_a.tabIndex = i
+                content.appendChild(content_a)
+
+            }
+            bottom_bar("sms", "", "call")
+
+            document.getElementById("content-box").style.display = "block"
+            document.querySelector("ul#content > li:first-child").focus()
+            status = "content";
+
+
+
+        } else {
+            alert("Sorry, there is no such contact.")
+        }
+    };
+
+    search.onerror = function() {
+        alert("Uh! Something goes wrong, no result found!");
+    };
+}
 
 //////////////////////////
 ////KEYPAD TRIGGER////////////
@@ -174,14 +295,33 @@ function handleKeyDown(evt)
 
         case 'Enter':
             evt.preventDefault();
+            if (status == "search") open_contact();
             break;
 
         case 'Backspace':
+            evt.preventDefault();
+            if (status == "content") {
+                view_contacts()
+                break;
+            }
+            if (status == "search") {
+                window.close()
+                break;
+            }
+
             break;
 
         case 'SoftLeft':
+            if (status == "content") {
+                sms(document.activeElement.getAttribute("data-number"));
+                break;
+            }
             break;
         case 'SoftRight':
+            if (status == "content") {
+                call(document.activeElement.getAttribute("data-number"));
+                break;
+            }
             break;
 
         case 'ArrowDown':

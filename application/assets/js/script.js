@@ -8,9 +8,12 @@ let tab_index_last;
 let init = false;
 let status = "search"
 const box = document.getElementById('box-list')
+document.getElementById('search').focus();
 
 
-
+////////////
+//TABINDEX NAVIGATION
+///////////
 function nav(move) {
 
 
@@ -40,22 +43,15 @@ function nav(move) {
 
 
 
-    if (move == "+1" && init && tab_index < siblings.length - 1) {
-
-
-
+    if (move == "+1" && init && tab_index < siblings.length - 1 && siblings.length > 0) {
 
         tab_index++
-        //document.querySelector('[tabindex="' + tab_index + '"]').focus();
         siblings[tab_index].focus()
 
-
-        //var scrollDiv = document.querySelector('[tabindex="' + tab_index + '"]').offsetTop;
-        var scrollDiv = siblings[tab_index].offsetTop;
-        window.scrollTo({
-            top: scrollDiv,
-            behavior: 'smooth'
+        siblings[tab_index].scrollIntoView({
+            block: "start"
         });
+
 
     }
     if (move == "-1" && tab_index > -1) {
@@ -68,21 +64,13 @@ function nav(move) {
 
         tab_index--
 
-
-
         siblings[tab_index].focus()
 
-
-        var scrollDiv = siblings[tab_index].offsetTop;
-        window.scrollTo({
-            top: scrollDiv,
-            behavior: 'smooth'
-        });
+        siblings[tab_index].scrollIntoView({
+            block: "start"
+        });;
 
     }
-
-
-
 }
 
 
@@ -102,7 +90,7 @@ let set_tabindex = function() {
 //list all contacts
 /////
 
-let search_list = function() {
+let contact_list = function() {
     count = 0;
 
     let a;
@@ -114,31 +102,30 @@ let search_list = function() {
     }
     var request = window.navigator.mozContacts.getAll({
         sortBy: "familyName",
-        sortOrder: "descending"
+        sortOrder: "ascending"
     });
 
 
     request.onsuccess = function() {
         if (this.result) {
-            count++;
-            // Display the name of the contact
-            a = document.createElement('li')
-            b = document.createElement('div')
-            b.setAttribute("class", "name");
-            b.setAttribute("data-id", this.result.id);
-            b.innerText = this.result.name
+            if (this.result.name != "") {
+                count++;
+                // Display the name of the contact
+                a = document.createElement('li')
+                b = document.createElement('div')
+                b.setAttribute("class", "name");
+                b.setAttribute("data-id", this.result.id);
+                b.innerText = this.result.name
 
-
-            a.appendChild(b)
-            box.appendChild(a)
-
+                a.appendChild(b)
+                box.appendChild(a)
+            }
 
             this.continue();
 
         } else {
             //alert("No more contacts");
-
-
+            //init search
             var options = {
                 valueNames: ['name'],
                 fuzzySearch: {
@@ -156,7 +143,6 @@ let search_list = function() {
             })
 
             init = true;
-            document.getElementById('search').focus();
 
 
         }
@@ -169,12 +155,15 @@ let search_list = function() {
 
 }
 
-search_list()
+contact_list()
 bottom_bar("", "", "")
 
 
+/////////
+////live search
+////////
 
-//trigger live search
+
 let live_search_trigger;
 let search = document.getElementById('search')
 
@@ -183,7 +172,11 @@ search.addEventListener("blur", end);
 
 
 function start() {
-    window.scrollTo(0, 0);
+
+    document.activeElement.parentElement.scrollIntoView({
+        block: "start"
+    });;
+
     bottom_bar("", "", "")
 
     live_search_trigger = setInterval(() => {
@@ -246,13 +239,9 @@ let open_contact = function() {
                 alert("this contact does not contain a phone number")
                 return false;
             }
-            //alert("Found:" + person.givenName[0] + " " + person.familyName[0]);
-            //alert(JSON.stringify(person.tel))
-            //alert(person.tel[0].value)
+
             for (let i = 0; i < person.tel.length; i++) {
                 p = person.tel[i].value;
-                //p.toString();
-                //replace whitespace
                 p = p.replace(/\s+/g, '');
 
                 content_a = document.createElement('li')

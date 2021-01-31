@@ -1,7 +1,7 @@
 {
 	"version": "1.0.0",
-	"name": "search",
-	"description": "search app for KaiOs",
+	"name": "contact",
+	"description": "contact app for KaiOs",
 	"launch_path": "/index.html",
 	"type": "privileged",
 	"fullscreen": "true",

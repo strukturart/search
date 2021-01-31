@@ -26,12 +26,28 @@
     display: none !Important;
 }
 
-select,
-option {
-    border: 0 none;
-    outline: 1px none;
+@font-face {
+    font-family: "Lato-Regular";
+    src: url("../fonts/Lato-Regular.ttf");
 }
 
+*,
+*:before,
+*:after {
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+:focus {
+    outline: none;
+}
+
+::-moz-focus-inner {
+    border: 0;
+}
 
 html,
 body {
@@ -49,6 +65,8 @@ body {
     height: 100vh;
     margin: 0;
     overflow: hidden;
+    font-family: "Lato-Regular";
+
 }
 
 
@@ -97,7 +115,7 @@ div#box {
     height: 90vh;
     width: 100%;
     overflow: hidden;
-    position: absolute;
+    //position: absolute;
 
 }
 
@@ -105,29 +123,27 @@ div#box {
 div#box-list {
     width: 100%;
     overflow: hidden;
-    position: absolute;
-
-
-
+    //position: absolute;
 }
 
 div#box div#box-inner {
     width: 100%;
-    position: absolute;
-    overflow: hidden;
-    padding: 0 0 50px 0;
+    //position: absolute;
+    //overflow: hidden;
+    //padding: 0 0 50px 0;
 }
 
 
 div#box ul {
     padding: 5px;
+    margin: 5px 0 0 0;
     height: 90vh;
     overflow: hidden;
 }
 
 div#box ul li {
     padding: 5px;
-    margin: 0 0 5px 0;
+    margin: 5px 0 0px 0;
     background: var(--color-three);
 }
 

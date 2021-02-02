@@ -4,7 +4,6 @@
 	"description": "contact app for KaiOs",
 	"launch_path": "/index.html",
 	"type": "privileged",
-	"fullscreen": "true",
 
 
 	"icons": {

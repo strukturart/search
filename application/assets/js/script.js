@@ -30,8 +30,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
         if (elem.id == "search") {
             document.querySelector("li[tabindex='0']").focus()
-
-
             return false;
         }
         if (elem.id != "search") {
@@ -50,8 +48,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-        if (move == "+1" && init && tab_index < siblings.length - 1 && siblings.length > 0) {
+        if (move == "+1" && tab_index < siblings.length - 1 && siblings.length > 1) {
 
             tab_index++
             siblings[tab_index].focus()
@@ -178,7 +175,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
     let a, b;
-    let content = document.getElementById("ul#box-list")
+    let content_b = document.getElementById("box-list")
     //content.innerHTML = "";
     let search = function(term) {
         var options = {
@@ -200,26 +197,43 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
             if (search_rq.result.length > 1) {
-                content.innerHTML = "";
+                // Get the <ul> element with id="myList"
+
+                // If the <ul> element has any child nodes, remove its first child node
+                while (content_b.hasChildNodes()) {
+                    content_b.removeChild(content_b.firstChild);
+                }
                 for (let k = 0; k < search_rq.result.length; k++) {
                     var person = search_rq.result[k];
 
-                    // Display the name of the contact
                     a = document.createElement('li')
                     b = document.createElement('div')
                     b.setAttribute("class", "name");
-                    //b.setAttribute("data-id", person.givenName[0]);
-                    b.innerText = person.givenName[0]
+                    b.setAttribute("data-id", person.id);
+                    b.innerText = person.name[0]
+
+                    //for short action 
+                    //call button in list status
+                    if (person.tel.length) {
+                        let p = person.tel[0].value;
+                        p = p.replace(/\s+/g, '');
+                        b.setAttribute("data-tel", p);
+                    }
+
 
                     a.appendChild(b)
                     box.appendChild(a)
 
                 }
+                set_tabindex()
 
 
 
             } else {
                 console.log("Sorry, there is no such contact.")
+                while (content_b.hasChildNodes()) {
+                    content_b.removeChild(content_b.firstChild);
+                }
             }
         };
 
@@ -262,9 +276,8 @@ window.addEventListener('DOMContentLoaded', function() {
             if (search_listener.value != "") {
                 //listObj.fuzzySearch(search.value);
                 search(search_listener.value)
-                console.log(search_listener.value)
             }
-            // if (search_listener.value == "") box.innerHTML = "";;
+            //if (search_listener.value == "") content_b.innerHTML = "";;
         }, 1000);
     }
 
@@ -377,6 +390,7 @@ window.addEventListener('DOMContentLoaded', function() {
         switch (evt.key) {
 
 
+
             case 'Enter':
                 evt.preventDefault();
                 if (status == "search") open_contact();
@@ -411,6 +425,17 @@ window.addEventListener('DOMContentLoaded', function() {
                 if (status == "content") {
                     call(document.activeElement.getAttribute("data-number"));
                     break;
+                }
+                break;
+
+            case 'Call':
+                if (status == "search") {
+                    if (document.activeElement.firstChild.hasAttribute("data-tel")) {
+                        call(document.activeElement.firstChild.getAttribute("data-tel"));
+
+                    } else {
+                        alert("this contact does not contain a phone number")
+                    }
                 }
                 break;
 

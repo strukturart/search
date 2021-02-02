@@ -1,17 +1,20 @@
 "use strict";
 
 
+let debug = true;
+let count = 0;
+let listObj;
+let tab_index = 0
+let tab_index_last;
+let init = false;
+let status = "search"
+const box = document.getElementById('box-list')
+document.getElementById('search').focus();
+
+
 window.addEventListener('DOMContentLoaded', function() {
 
-    let debug = true;
-    let count = 0;
-    let listObj;
-    let tab_index = 0
-    let tab_index_last;
-    let init = false;
-    let status = "search"
-    const box = document.getElementById('box-list')
-    document.getElementById('search').focus();
+
 
 
     ////////////
@@ -27,6 +30,8 @@ window.addEventListener('DOMContentLoaded', function() {
 
         if (elem.id == "search") {
             document.querySelector("li[tabindex='0']").focus()
+
+
             return false;
         }
         if (elem.id != "search") {
@@ -61,7 +66,15 @@ window.addEventListener('DOMContentLoaded', function() {
 
             //search field 
             if (document.activeElement == document.querySelector("ul li:first-child")) {
-                document.querySelector("input#search").focus()
+
+                document.querySelector("input#search").focus(); //sets focus to element
+                var val = document.querySelector("input#search").value; //store the value of the element
+                document.querySelector("input#search").value = ''; //clear the value of the element
+                //set that value back. 
+                setTimeout(function() {
+                    document.querySelector("input#search").value = val;
+                }, 1);
+
                 return false;
             }
 
@@ -158,8 +171,67 @@ window.addEventListener('DOMContentLoaded', function() {
 
     }
 
-    contact_list()
-    bottom_bar("", "", "settings")
+
+    /////
+    ////search
+    ////
+
+
+    let a, b;
+    let content = document.getElementById("ul#box-list")
+    //content.innerHTML = "";
+    let search = function(term) {
+        var options = {
+            filterValue: term,
+            filterBy: ["name", "familyName"],
+            filterOp: "contains",
+            filterLimit: 10,
+            sortBy: "familyName",
+            sortOrder: "ascending"
+        }
+        console.log(term)
+
+        let search_rq = window.navigator.mozContacts.find(options);
+
+
+        search_rq.onsuccess = function() {
+
+            tab_index = 0
+
+
+            if (search_rq.result.length > 1) {
+                content.innerHTML = "";
+                for (let k = 0; k < search_rq.result.length; k++) {
+                    var person = search_rq.result[k];
+
+                    // Display the name of the contact
+                    a = document.createElement('li')
+                    b = document.createElement('div')
+                    b.setAttribute("class", "name");
+                    //b.setAttribute("data-id", person.givenName[0]);
+                    b.innerText = person.givenName[0]
+
+                    a.appendChild(b)
+                    box.appendChild(a)
+
+                }
+
+
+
+            } else {
+                console.log("Sorry, there is no such contact.")
+            }
+        };
+
+
+        search_rq.onerror = function() {
+            toaster("Uh! Something goes wrong, no result found!");
+        };
+    }
+
+
+    //contact_list()
+    bottom_bar("", "", "options")
 
 
     /////////
@@ -168,10 +240,10 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
     let live_search_trigger;
-    let search = document.getElementById('search')
+    let search_listener = document.getElementById('search')
 
-    search.addEventListener("focus", start);
-    search.addEventListener("blur", end);
+    search_listener.addEventListener("focus", start);
+    search_listener.addEventListener("blur", end);
 
 
     function start() {
@@ -180,24 +252,26 @@ window.addEventListener('DOMContentLoaded', function() {
             block: "start"
         });;
 
-        bottom_bar("", "", "settings")
+        bottom_bar("", "", "options")
         //start search
         //in kaios the keypress a-z are not recognized
         //therefore this detour
 
         live_search_trigger = setInterval(() => {
 
-            if (search.value != "") {
-                listObj.fuzzySearch(search.value);
+            if (search_listener.value != "") {
+                //listObj.fuzzySearch(search.value);
+                search(search_listener.value)
+                console.log(search_listener.value)
             }
-            if (search.value == "") listObj.search();
-        }, 100);
+            // if (search_listener.value == "") box.innerHTML = "";;
+        }, 1000);
     }
 
 
     function end() {
         clearInterval(live_search_trigger);
-        bottom_bar("", "select", "settings")
+        bottom_bar("search", "select", "options")
 
     }
 
@@ -205,12 +279,13 @@ window.addEventListener('DOMContentLoaded', function() {
     let view_contacts = function() {
         tab_index = tab_index_last;
         document.querySelector("ul#box-list li[tabindex='" + tab_index + "']").focus()
-        bottom_bar("", "select", "")
+        bottom_bar("search", "select", "options")
 
         document.getElementById("content-box").style.display = "none"
         status = "search";
 
     }
+
 
 
     ///////
@@ -275,6 +350,21 @@ window.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+
+    ///////////
+    ///go to search field
+    //////////
+
+    let open_search = function() {
+
+        document.activeElement.parentElement.scrollIntoView({
+            block: "start"
+        });;
+
+        document.getElementById("search").focus();
+
+    }
+
     //////////////////////////
     ////KEYPAD TRIGGER////////////
     /////////////////////////
@@ -310,6 +400,12 @@ window.addEventListener('DOMContentLoaded', function() {
                     sms(document.activeElement.getAttribute("data-number"));
                     break;
                 }
+
+                if (status == "search") {
+                    open_search()
+                    break;
+                }
+
                 break;
             case 'SoftRight':
                 if (status == "content") {

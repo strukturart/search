@@ -115,7 +115,6 @@ div#box {
     height: 90vh;
     width: 100%;
     overflow: hidden;
-    //position: absolute;
 
 }
 
@@ -123,14 +122,11 @@ div#box {
 div#box-list {
     width: 100%;
     overflow: hidden;
-    //position: absolute;
 }
 
 div#box div#box-inner {
     width: 100%;
-    //position: absolute;
-    //overflow: hidden;
-    //padding: 0 0 50px 0;
+
 }
 
 
@@ -181,6 +177,43 @@ div#content-box ul li:focus {
 }
 
 
+/*
+ SETTINGS
+ */
+
+
+div#settings {
+    display: none;
+    background: gray;
+    padding: 15px 5px 5px 5px;
+    min-height: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    position: fixed;
+    top: 0;
+}
+
+
+
+
+div#settings label {
+    min-width: 80%;
+    height: 30px;
+    margin: 5px 5px 0 0;
+}
+
+
+div#settings input {
+    width: 80%;
+    height: 30px;
+    font-size: 1rem;
+    border: 2px solid black;
+    margin: 0 0 25px 0;
+    padding: 3px;
+    display: block;
+}
+
+
 
 
 /*///////////////////////////
@@ -193,10 +226,10 @@ div#toast {
     top: -100px;
     background: black;
     color: white;
-    z-index: 5000;
+    z-index: 5000000;
     min-width: 100%;
     padding: 5px;
-    display: none;
+    //display: none;
 }
 
 /*/////////////////
@@ -242,6 +275,57 @@ div#bottom-bar div#button-left {
 }
 
 div#bottom-bar div#button-right {
+    background: black;
+    color: white;
+    padding: 2px;
+    width: 30%;
+    text-align: right;
+}
+
+
+/*/////////////////
+///TOP-BAR///////*/
+
+div#top-bar {
+    position: fixed;
+    z-index: 2000;
+    top: 0px;
+    left: 0px;
+    height: 18px;
+    z-index: 5000;
+    background: black;
+    min-width: 100vw;
+    display: none;
+}
+
+div#top-bar div#inner {
+    position: relative;
+}
+
+div#top-bar div {
+    background: black;
+    color: white;
+    padding: 2px;
+}
+
+div#top-bar div#button-center {
+    background: black;
+    color: white;
+    padding: 2px;
+    width: 30%;
+    text-align: center;
+}
+
+div#top-bar div#button-left {
+    background: black;
+    color: white;
+    padding: 2px;
+    width: 20px;
+    text-align: left;
+    width: 30%;
+}
+
+div#top-bar div#button-right {
     background: black;
     color: white;
     padding: 2px;

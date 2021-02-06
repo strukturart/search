@@ -30,20 +30,29 @@ window.addEventListener('DOMContentLoaded', function() {
 
         if (elem.id == "search") {
             document.querySelector("li[tabindex='0']").focus()
+            status = "list"
+            bottom_bar("search", "select", "sms")
             return false;
         }
         if (elem.id != "search") {
 
             var sibling = elem.parentNode.firstChild;
 
+
+
+
             // Loop through each sibling and push to the array
             while (sibling) {
-                if (sibling.hasAttribute("tabindex")) {
+
+
+                if (sibling.tabIndex != null && sibling.tabIndex != undefined && sibling.tabIndex > -1) {
                     siblings.push(sibling);
                 }
                 sibling = sibling.nextSibling;
             }
         }
+
+
 
 
 
@@ -59,7 +68,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
         }
-        if (move == "-1" && tab_index > -1) {
+        if (move == "-1" && tab_index > 0) {
 
             //search field 
             if (document.activeElement == document.querySelector("ul li:first-child")) {
@@ -121,17 +130,32 @@ window.addEventListener('DOMContentLoaded', function() {
 
         request.onsuccess = function() {
             if (this.result) {
-                if (this.result.name != "") {
-                    count++;
-                    // Display the name of the contact
-                    a = document.createElement('li')
-                    b = document.createElement('div')
-                    b.setAttribute("class", "name");
-                    b.setAttribute("data-id", this.result.id);
-                    b.innerText = this.result.name
 
-                    a.appendChild(b)
-                    box.appendChild(a)
+                if (this.result.name != null) {
+
+                    let be = this.result.name.toString()
+                    if (this.result.name != "") {
+                        count++;
+
+
+                        let tel = "";
+
+                        if (this.result.tel.length > 0) {
+                            tel = this.result.tel[0].value
+                        }
+
+
+                        // Display the name of the contact
+                        a = document.createElement('li')
+                        b = document.createElement('div')
+                        b.setAttribute("class", "name");
+                        a.setAttribute("data-id", this.result.id);
+                        a.setAttribute("data-tel", tel);
+                        b.innerText = this.result.name
+
+                        a.appendChild(b)
+                        box.appendChild(a)
+                    }
                 }
 
                 this.continue();
@@ -139,12 +163,15 @@ window.addEventListener('DOMContentLoaded', function() {
             } else {
                 //alert("No more contacts");
                 //init search
+
+                set_tabindex()
+
                 var options = {
                     valueNames: ['name'],
                     fuzzySearch: {
                         searchClass: "fuzzy-search",
                         location: 0,
-                        distance: 50,
+                        distance: 100,
                         threshold: 0.1,
                         multiSearch: true
                     }
@@ -169,24 +196,126 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
 
+    contact_list()
+
+
+    ///////
+    //search by looping over contacts
     /////
-    ////search
+
+    let search2 = function(term) {
+
+        while (content_b.hasChildNodes()) {
+            content_b.removeChild(content_b.firstChild);
+        }
+        count = 0;
+
+        let a;
+        let b;
+
+        if (!window.navigator.mozContacts) {
+            console.log("fail")
+            return false;
+        }
+        var request = window.navigator.mozContacts.getAll({
+            sortBy: "familyName",
+            sortOrder: "ascending"
+        });
+
+
+        let contacts = []
+
+
+
+        request.onsuccess = function() {
+            //alert(JSON.stringify(this.result))
+
+            if (this.result) {
+
+                if (this.result.name != null) {
+
+                    //alert(JSON.stringify(this.result))
+
+                    let be = this.result.name.toString()
+                    //term = term.replace(" ", "|");
+                    term = term.replace(" ", ".*");
+                    let flag = 'gi' //simple string with flags
+                    let dynamicRegExp = new RegExp(`${term}`, flag)
+
+                    let tel = "";
+
+                    if (this.result.tel.length > 0) {
+                        tel = this.result.tel[0].value
+                    }
+
+
+                    if (be.search(dynamicRegExp) > -1 && this.result.name != "") {
+                        contacts.push({
+                            "name": this.result.name,
+                            "id": this.result.id,
+                            "pos": be.search(dynamicRegExp),
+                            "tel": tel
+                        })
+
+                    }
+                }
+
+                this.continue();
+
+            } else {
+
+                while (content_b.hasChildNodes()) {
+                    content_b.removeChild(content_b.firstChild);
+                }
+                /*
+                                contacts.sort((a, b) => {
+                                    return a.pos - b.pos;
+                                });
+                                */
+
+                for (let i = 0; i < contacts.length; i++) {
+
+                    a = document.createElement('li')
+                    a.setAttribute("class", "name");
+                    a.setAttribute("data-id", contacts[i].id);
+                    a.setAttribute("data-tel", contacts[i].tel);
+                    a.innerText = contacts[i].name
+                    box.appendChild(a)
+
+                }
+                set_tabindex();
+                contacts.splice(0, contacts.length)
+
+            }
+        }
+
+        request.onerror = function() {
+            alert('Something goes wrong!');
+        }
+
+
+    }
+
+
+
+
+
+    /////
+    ////search methode contacts api
     ////
 
 
     let a, b;
     let content_b = document.getElementById("box-list")
-    //content.innerHTML = "";
     let search = function(term) {
         var options = {
             filterValue: term,
-            filterBy: ["name", "familyName"],
+            filterBy: ["name"],
             filterOp: "contains",
-            filterLimit: 10,
+            filterLimit: 100,
             sortBy: "familyName",
             sortOrder: "ascending"
         }
-        console.log(term)
 
         let search_rq = window.navigator.mozContacts.find(options);
 
@@ -208,20 +337,20 @@ window.addEventListener('DOMContentLoaded', function() {
 
                     a = document.createElement('li')
                     b = document.createElement('div')
-                    b.setAttribute("class", "name");
-                    b.setAttribute("data-id", person.id);
-                    b.innerText = person.name[0]
+                    a.setAttribute("class", "name");
+                    a.setAttribute("data-id", person.id);
+                    a.innerText = person.name[0]
 
                     //for short action 
                     //call button in list status
                     if (person.tel.length) {
                         let p = person.tel[0].value;
                         p = p.replace(/\s+/g, '');
-                        b.setAttribute("data-tel", p);
+                        a.setAttribute("data-tel", p);
                     }
 
 
-                    a.appendChild(b)
+                    //a.appendChild(b)
                     box.appendChild(a)
 
                 }
@@ -245,7 +374,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
     //contact_list()
-    bottom_bar("", "", "options")
+    bottom_bar("", "", "settings")
 
 
     /////////
@@ -253,49 +382,33 @@ window.addEventListener('DOMContentLoaded', function() {
     ////////
 
 
-    let live_search_trigger;
+
     let search_listener = document.getElementById('search')
 
-    search_listener.addEventListener("focus", start);
-    search_listener.addEventListener("blur", end);
 
+    search_listener.addEventListener("focus", search_active);
+    search_listener.addEventListener("input", start_search);
 
-    function start() {
+    function start_search() {
+        //search2(search_listener.value)
+        //toaster(search_listener.value.toString(), 1000)
+        listObj.fuzzySearch(search_listener.value.toString());
+    }
 
-        document.activeElement.parentElement.scrollIntoView({
-            block: "start"
-        });;
-
-        bottom_bar("", "", "options")
-        //start search
-        //in kaios the keypress a-z are not recognized
-        //therefore this detour
-
-        live_search_trigger = setInterval(() => {
-
-            if (search_listener.value != "") {
-                //listObj.fuzzySearch(search.value);
-                search(search_listener.value)
-            }
-            //if (search_listener.value == "") content_b.innerHTML = "";;
-        }, 1000);
+    function search_active() {
+        bottom_bar("", "", "settings")
+        document.activeElement.parentElement.scrollIntoView();
     }
 
 
-    function end() {
-        clearInterval(live_search_trigger);
-        bottom_bar("search", "select", "options")
 
-    }
-
-
-    let view_contacts = function() {
+    let view_list = function() {
         tab_index = tab_index_last;
         document.querySelector("ul#box-list li[tabindex='" + tab_index + "']").focus()
-        bottom_bar("search", "select", "options")
+        bottom_bar("search", "select", "sms")
 
         document.getElementById("content-box").style.display = "none"
-        status = "search";
+        status = "list";
 
     }
 
@@ -307,7 +420,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
     let open_contact = function() {
         tab_index_last = tab_index;
-        let c_id = document.activeElement.firstChild.getAttribute("data-id")
+        let c_id = document.activeElement.getAttribute("data-id")
         var options = {
             filterValue: c_id,
             filterBy: ["id"],
@@ -330,6 +443,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
                 if (person.tel.length == 0) {
                     alert("this contact does not contain a phone number")
+                    status = "list"
                     return false;
                 }
 
@@ -339,7 +453,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
                     content_a = document.createElement('li')
                     content_a.setAttribute("class", "content-item");
-                    content_a.setAttribute("data-number", p);
+                    content_a.setAttribute("data-tel", p);
                     content_a.innerText = p
                     content_a.tabIndex = i
                     content.appendChild(content_a)
@@ -375,16 +489,50 @@ window.addEventListener('DOMContentLoaded', function() {
         });;
 
         document.getElementById("search").focus();
+        status = "search"
 
     }
+
+    settings.load_settings()
+
+    ///////////
+    ///open settings
+    //////////
+
+    let open_settings = function() {
+        tab_index = 0;
+        document.getElementById("settings").style.display = "block"
+        document.querySelector("input#callcard-00").focus()
+        status = "settings"
+        settings.load_settings()
+        bottom_bar("save", "", "cancel")
+
+    }
+
+    let close_settings = function() {
+
+        document.getElementById("settings").style.display = "none"
+        bottom_bar("", "", "settings")
+        status = "search"
+        open_search()
+
+
+    }
+
+    let save_settings = function() {
+
+        settings.save_settings()
+        toaster("saved successfully", 2000)
+
+    }
+
+
 
     //////////////////////////
     ////KEYPAD TRIGGER////////////
     /////////////////////////
-    function handleKeyDown(evt)
+    function handleKeyDown(evt) {
 
-
-    {
 
 
         switch (evt.key) {
@@ -393,16 +541,16 @@ window.addEventListener('DOMContentLoaded', function() {
 
             case 'Enter':
                 evt.preventDefault();
-                if (status == "search") open_contact();
+                if (status == "list") open_contact();
                 break;
 
             case 'Backspace':
                 evt.preventDefault();
                 if (status == "content") {
-                    view_contacts()
+                    view_list()
                     break;
                 }
-                if (status == "search") {
+                if (status == "search" || status == "list") {
                     window.close()
                     break;
                 }
@@ -411,27 +559,53 @@ window.addEventListener('DOMContentLoaded', function() {
 
             case 'SoftLeft':
                 if (status == "content") {
-                    sms(document.activeElement.getAttribute("data-number"));
+                    sms(document.activeElement.getAttribute("data-tel"));
                     break;
                 }
 
-                if (status == "search") {
+                if (status == "list") {
                     open_search()
+                    break;
+                }
+
+                if (status == "settings") {
+                    save_settings()
                     break;
                 }
 
                 break;
             case 'SoftRight':
                 if (status == "content") {
-                    call(document.activeElement.getAttribute("data-number"));
+                    call(document.activeElement.getAttribute("data-tel"));
                     break;
                 }
+
+
+                if (status == "search") {
+                    open_settings()
+                    break;
+                }
+
+                if (status == "settings") {
+                    close_settings()
+                    break;
+                }
+
+                if (status == "list") {
+                    if (document.activeElement.hasAttribute("data-tel")) {
+                        sms(document.activeElement.getAttribute("data-tel"), "");
+
+                    } else {
+                        alert("this contact does not contain a phone number")
+                    }
+                }
+
                 break;
 
             case 'Call':
-                if (status == "search") {
-                    if (document.activeElement.firstChild.hasAttribute("data-tel")) {
-                        call(document.activeElement.firstChild.getAttribute("data-tel"));
+                if (status == "list") {
+                    if (document.activeElement.hasAttribute("data-tel")) {
+                        call(document.activeElement.getAttribute("data-tel"));
 
                     } else {
                         alert("this contact does not contain a phone number")
@@ -439,12 +613,42 @@ window.addEventListener('DOMContentLoaded', function() {
                 }
                 break;
 
+
+            case '#':
+
+                if (status == "list") {
+                    let callcard = settings.load_settings()
+                    if (document.activeElement.hasAttribute("data-tel")) {
+
+                        call(callcard[0] + document.activeElement.getAttribute("data-tel") + callcard[1])
+
+                    } else {
+                        alert("this contact does not contain a phone number")
+                    }
+                }
+                break;
+
+            case '*':
+
+                if (status == "list") {
+                    let callcard = settings.load_settings()
+                    if (document.activeElement.hasAttribute("data-tel")) {
+
+                        sms("", document.activeElement.getAttribute("data-tel"))
+
+                    } else {
+                        alert("this contact does not contain a phone number")
+                    }
+                }
+
+                break;
+
             case 'ArrowDown':
-                nav("+1")
+                if (init) nav("+1")
                 break;
 
             case 'ArrowUp':
-                nav("-1")
+                if (init) nav("-1")
                 break;
 
             default:

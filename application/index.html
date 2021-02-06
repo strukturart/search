@@ -10,6 +10,8 @@
 </head>
 
 <body>
+    <div id="toast" class="width-100"></div>
+
 
     <div id="wrapper">
         <!---------------->
@@ -32,7 +34,6 @@
 
 
 
-        <div id="toast" class="width-100"></div>
         <div id="bottom-bar">
             <div class="inner flex justify-content-spacebetween width-100">
                 <div id="button-left"></div>
@@ -49,11 +50,21 @@
             </div>
         </div>
 
+
+        <div id="settings">
+            <h2>callcard</h2>
+            <label for="input-0">value before number</label>
+            <input tabindex="0" type="text" name="input-0" id="callcard-00" />
+
+            <label for="input-1">value after number</label>
+            <input tabindex="1" type="text" name="input-1" id="callcard-01" />
+        </div>
+
     </div>
 
 </body>
 
-
+<script defer src="assets/js/settings.js"></script>
 <script defer src="assets/js/jQuery-3.1.0.js"></script>
 <script defer src="assets/js/helper.js"></script>
 <script defer src="assets/js/list.js"></script>

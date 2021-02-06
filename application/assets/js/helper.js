@@ -110,7 +110,7 @@ function toaster(text, time) {
 }
 
 
-function sms(number) {
+function sms(number, body_content) {
 
 
     let sms = new MozActivity({
@@ -118,6 +118,7 @@ function sms(number) {
         data: {
             type: "websms/sms",
             number: number,
+            body: body_content
         }
     })
 

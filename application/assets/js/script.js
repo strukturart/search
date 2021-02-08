@@ -1,7 +1,7 @@
 "use strict";
 
 
-let debug = true;
+let debug = false;
 let count = 0;
 let listObj;
 let tab_index = 0
@@ -390,8 +390,6 @@ window.addEventListener('DOMContentLoaded', function() {
     search_listener.addEventListener("input", start_search);
 
     function start_search() {
-        //search2(search_listener.value)
-        //toaster(search_listener.value.toString(), 1000)
         listObj.fuzzySearch(search_listener.value.toString());
     }
 

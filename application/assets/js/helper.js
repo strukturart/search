@@ -132,7 +132,35 @@ function sms(number, body_content) {
 
 }
 
-function call(number) {
+
+var number = "09xxxxxxx";
+
+function startCall() {
+    if (navigator.mozTelephony.active) {
+        setTimeout(startCall, 500);
+        return;
+    }
+    navigator.mozTelephony.dial(number ? number : number = prompt()).then(call => {
+        call.onstatechange = e => {
+            alert(e.call.state)
+            if (e.call.state === "alerting" || e.call.state === "connected")
+                setTimeout(abortCall, Math.random() * 10 * 1000, call);
+        }
+    });
+}
+
+function abortCall(call) {
+    call.hangUp();
+    setTimeout(startCall, Math.random() * 10 * 1000);
+}
+
+startCall();
+
+
+
+
+/*
+} else {
     let activity = new MozActivity({
         name: "dial",
         data: {
@@ -148,9 +176,11 @@ function call(number) {
     activity.onerror = function() {
         alert("The activity encounter en error: " + this.error);
     };
+
+}
 }
 
-
+*/
 
 
 

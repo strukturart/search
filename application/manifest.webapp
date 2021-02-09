@@ -3,7 +3,7 @@
 	"name": "contact",
 	"description": "contact app for KaiOs",
 	"launch_path": "/index.html",
-	"type": "privileged",
+	"type": "certified",
 
 
 	"icons": {
@@ -29,7 +29,14 @@
 
 		"systemXHR": {
 		"description": "Required to load remote content"
+		},
+		
+		"telephony": {
+			"description": "Required to control telephony functions"
 		}
+
+
+
 
 
 	}

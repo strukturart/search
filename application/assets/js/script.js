@@ -183,6 +183,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 })
 
                 init = true;
+                listObj.fuzzySearch(search_listener.value.toString());
+
 
 
             }

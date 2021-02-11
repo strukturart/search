@@ -117,9 +117,10 @@ window.addEventListener('DOMContentLoaded', function() {
 
         let a;
         let b;
+        let tel = "";
 
         if (!window.navigator.mozContacts) {
-            console.log("fail")
+            alert("fail")
             return false;
         }
         var request = window.navigator.mozContacts.getAll({
@@ -132,17 +133,16 @@ window.addEventListener('DOMContentLoaded', function() {
             if (this.result) {
 
                 if (this.result.name != null) {
-
-                    let be = this.result.name.toString()
+                    let be = this.result.name
                     if (this.result.name != "") {
-                        count++;
 
 
-                        let tel = "";
+                        var y = this.result.hasOwnProperty("tel");
+                        if (this.result.tel != null && this.result.tel.length >= 0 && this.result.tel[0] != undefined) tel = this.result.tel[0].value
 
-                        if (this.result.tel.length > 0) {
-                            tel = this.result.tel[0].value
-                        }
+
+
+
 
 
                         // Display the name of the contact
@@ -152,16 +152,17 @@ window.addEventListener('DOMContentLoaded', function() {
                         a.setAttribute("data-id", this.result.id);
                         a.setAttribute("data-tel", tel);
                         b.innerText = this.result.name
-
                         a.appendChild(b)
                         box.appendChild(a)
                     }
+
                 }
 
                 this.continue();
 
+
+
             } else {
-                //alert("No more contacts");
                 //init search
 
                 set_tabindex()
@@ -576,7 +577,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'SoftRight':
                 if (status == "content") {
-                    call(document.activeElement.getAttribute("data-tel"));
+                    //call(document.activeElement.getAttribute("data-tel"));
+                    call2()
                     break;
                 }
 

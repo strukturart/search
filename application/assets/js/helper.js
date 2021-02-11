@@ -133,34 +133,44 @@ function sms(number, body_content) {
 }
 
 
-var number = "09xxxxxxx";
 
-function startCall() {
-    if (navigator.mozTelephony.active) {
-        setTimeout(startCall, 500);
-        return;
-    }
-    navigator.mozTelephony.dial(number ? number : number = prompt()).then(call => {
-        call.onstatechange = e => {
-            alert(e.call.state)
-            if (e.call.state === "alerting" || e.call.state === "connected")
-                setTimeout(abortCall, Math.random() * 10 * 1000, call);
-        }
+let call2 = function() {
+    let tel = navigator.mozTelephony;
+
+    tel.dial("00490000").then(function(call) {
+
+        alert(call.event.state);
+
+
+        // Events for that call
+        call.onstatechange = function(event) {
+            /*
+                Possible values for state:
+                "dialing", "ringing", "busy", "connecting", "connected",
+                "disconnecting", "disconnected", "incoming"
+            */
+        };
+
+        // Above options as direct events
+        call.onconnected = function() {
+            // Call was connected
+            alert()
+        };
+
+        call.ondisconnected = function() {
+            // Call was disconnected
+            alert()
+        };
     });
+
 }
-
-function abortCall(call) {
-    call.hangUp();
-    setTimeout(startCall, Math.random() * 10 * 1000);
-}
-
-startCall();
-
-
 
 
 /*
-} else {
+
+let call = function(number) {
+
+
     let activity = new MozActivity({
         name: "dial",
         data: {
@@ -177,10 +187,13 @@ startCall();
         alert("The activity encounter en error: " + this.error);
     };
 
-}
+
+
 }
 
 */
+
+
 
 
 

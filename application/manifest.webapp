@@ -33,11 +33,13 @@
 		
 		"telephony": {
 			"description": "Required to control telephony functions"
-		}
+		},
 
+		"audio-channel-telephony":{},
 
+		"attention":{},
 
-
+		"mobileconnection":{}
 
 	}
 

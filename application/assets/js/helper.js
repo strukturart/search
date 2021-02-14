@@ -134,39 +134,12 @@ function sms(number, body_content) {
 
 
 
-let call2 = function() {
-    let tel = navigator.mozTelephony;
-
-    tel.dial("00490000").then(function(call) {
-
-        alert(call.event.state);
-
-
-        // Events for that call
-        call.onstatechange = function(event) {
-            /*
-                Possible values for state:
-                "dialing", "ringing", "busy", "connecting", "connected",
-                "disconnecting", "disconnected", "incoming"
-            */
-        };
-
-        // Above options as direct events
-        call.onconnected = function() {
-            // Call was connected
-            alert()
-        };
-
-        call.ondisconnected = function() {
-            // Call was disconnected
-            alert()
-        };
-    });
-
+let call2 = function(tel_number) {
+    navigator.mozTelephony.dial(tel_number, 1)
 }
 
 
-/*
+
 
 let call = function(number) {
 
@@ -191,7 +164,7 @@ let call = function(number) {
 
 }
 
-*/
+
 
 
 

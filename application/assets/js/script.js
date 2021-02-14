@@ -140,11 +140,6 @@ window.addEventListener('DOMContentLoaded', function() {
                         var y = this.result.hasOwnProperty("tel");
                         if (this.result.tel != null && this.result.tel.length >= 0 && this.result.tel[0] != undefined) tel = this.result.tel[0].value
 
-
-
-
-
-
                         // Display the name of the contact
                         a = document.createElement('li')
                         b = document.createElement('div')
@@ -578,7 +573,7 @@ window.addEventListener('DOMContentLoaded', function() {
             case 'SoftRight':
                 if (status == "content") {
                     //call(document.activeElement.getAttribute("data-tel"));
-                    call2()
+                    call(document.activeElement.getAttribute("data-tel"))
                     break;
                 }
 
@@ -622,7 +617,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     let callcard = settings.load_settings()
                     if (document.activeElement.hasAttribute("data-tel")) {
 
-                        call(callcard[0] + document.activeElement.getAttribute("data-tel") + callcard[1])
+                        call2(callcard[0] + document.activeElement.getAttribute("data-tel") + callcard[1])
 
                     } else {
                         alert("this contact does not contain a phone number")

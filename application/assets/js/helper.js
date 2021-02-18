@@ -135,7 +135,14 @@ function sms(number, body_content) {
 
 
 let call2 = function(tel_number) {
-    navigator.mozTelephony.dial(tel_number, 1)
+    navigator.mozTelephony.dial(tel_number, 0, 0, 0).then(call => {
+        call.onstatechange = evt => {
+            if (evt.call.state === CONNECTED) {
+                navigator.mozTelephony.startTone("#", 0);
+            }
+        }
+    })
+
 }
 
 

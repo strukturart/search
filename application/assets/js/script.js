@@ -174,8 +174,6 @@ window.addEventListener("DOMContentLoaded", function () {
     };
   };
 
-  contact_list();
-
   ///////
   //search by looping over contacts
   /////
@@ -315,7 +313,7 @@ window.addEventListener("DOMContentLoaded", function () {
     };
   };
 
-  //contact_list()
+  contact_list();
   bottom_bar("", "", lang[user_lang].settings);
 
   /////////

@@ -9,7 +9,9 @@ let status = "search";
 const box = document.getElementById("box-list");
 document.getElementById("search").focus();
 
+//translation
 let user_lang = window.navigator.userLanguage || window.navigator.language;
+if (!lang.hasOwnProperty(user_lang)) user_lang = "default";
 document.querySelector("input#search").placeholder = lang[user_lang].search;
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -174,6 +176,9 @@ window.addEventListener("DOMContentLoaded", function () {
     };
   };
 
+  contact_list();
+  bottom_bar("", "", lang[user_lang].settings);
+
   ///////
   //search by looping over contacts
   /////
@@ -312,9 +317,6 @@ window.addEventListener("DOMContentLoaded", function () {
       toaster("Uh! Something goes wrong, no result found!");
     };
   };
-
-  contact_list();
-  bottom_bar("", "", lang[user_lang].settings);
 
   /////////
   ////live search

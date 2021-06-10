@@ -124,7 +124,13 @@ window.addEventListener("DOMContentLoaded", function () {
       if (this.result) {
         if (this.result.name != null) {
           let be = this.result.name;
-          console.log(be);
+          console.log(JSON.stringify(this.result));
+          if(this.result.email != null && this.result.email[0] != undefined && this.result.email.length>= 0)
+          {
+            console.log(this.result.email[0].value)
+          }
+
+
           if (this.result.name != "") {
             var y = this.result.hasOwnProperty("tel");
             if (

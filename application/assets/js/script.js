@@ -9,12 +9,12 @@ let status = "search";
 const box = document.getElementById("box-list");
 document.getElementById("search").focus();
 
-//translation
-let user_lang = window.navigator.userLanguage || window.navigator.language;
-if (!lang.hasOwnProperty(user_lang)) user_lang = "default";
-document.querySelector("input#search").placeholder = lang[user_lang].search;
-
 window.addEventListener("DOMContentLoaded", function () {
+  //translation
+  let user_lang = window.navigator.userLanguage || window.navigator.language;
+  if (!lang.hasOwnProperty(user_lang)) user_lang = "default";
+  document.querySelector("input#search").placeholder = lang[user_lang].search;
+
   ////////////
   //TABINDEX NAVIGATION
   ///////////
@@ -104,6 +104,7 @@ window.addEventListener("DOMContentLoaded", function () {
   /////
 
   let contact_list = function () {
+    console.log("start reading contacts");
     count = 0;
 
     let a;
@@ -123,6 +124,7 @@ window.addEventListener("DOMContentLoaded", function () {
       if (this.result) {
         if (this.result.name != null) {
           let be = this.result.name;
+          console.log(be);
           if (this.result.name != "") {
             var y = this.result.hasOwnProperty("tel");
             if (

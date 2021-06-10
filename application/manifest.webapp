@@ -21,16 +21,10 @@
 
 	"permissions": 
 	{
-		"contacts":{"access":"readwrite"},
-		
-		"spatialnavigation-app-manage": {
-		"navigator.spatialNavigationEnabled": false
+		"contacts":{
+			"description": "Read contacts",
+			"access":"readonly"
 		},
-
-		"systemXHR": {
-		"description": "Required to load remote content"
-		},
-		
 		"telephony": {
 			"description": "Required to control telephony functions"
 		},
@@ -41,29 +35,5 @@
 
 		"mobileconnection":{}
 
-	},
-	 "locales": {
-    "en-US": {
-      "name": "Contact",
-      "subtitle": "Adressbook",
-      "description": ""
-    },
-	 "de-DE": {
-      "name": "Kontakte",
-      "subtitle": "Adressbuch",
-      "description": ""
-    },
-	
-	 "he": {
-      "name": "Kontakte",
-      "subtitle": "Adressbuch",
-      "description": ""
-    }
-  },
-   
-  
-  "default_locale": "en-US"
-
-
- 
+	}
 }

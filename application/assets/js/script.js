@@ -9,6 +9,10 @@ let status = "search";
 const box = document.getElementById("box-list");
 document.getElementById("search").focus();
 
+let favorit = JSON.parse(localStorage.getItem("favorit") || "[]");
+favorit = favorit.slice(0, 5);
+console.log(JSON.stringify(favorit));
+
 window.addEventListener("DOMContentLoaded", function () {
   //translation
   let user_lang = window.navigator.userLanguage || window.navigator.language;
@@ -104,7 +108,6 @@ window.addEventListener("DOMContentLoaded", function () {
   /////
 
   let contact_list = function () {
-    console.log("start reading contacts");
     count = 0;
 
     let a;
@@ -124,12 +127,16 @@ window.addEventListener("DOMContentLoaded", function () {
       if (this.result) {
         if (this.result.name != null) {
           let be = this.result.name;
-          console.log(JSON.stringify(this.result));
-          if(this.result.email != null && this.result.email[0] != undefined && this.result.email.length>= 0)
-          {
-            console.log(this.result.email[0].value)
-          }
+          let id = this.result.id;
 
+          //console.log(JSON.stringify(this.result));
+          if (
+            this.result.email != null &&
+            this.result.email[0] != undefined &&
+            this.result.email.length >= 0
+          ) {
+            //console.log(this.result.email[0].value);
+          }
 
           if (this.result.name != "") {
             var y = this.result.hasOwnProperty("tel");
@@ -139,16 +146,32 @@ window.addEventListener("DOMContentLoaded", function () {
               this.result.tel[0] != undefined
             )
               tel = this.result.tel[0].value;
-
             // Display the name of the contact
             a = document.createElement("li");
             b = document.createElement("div");
             b.setAttribute("class", "name");
+            b.setAttribute("data-id", this.result.id);
             a.setAttribute("data-id", this.result.id);
             a.setAttribute("data-tel", tel);
             b.innerText = this.result.name;
             a.appendChild(b);
             box.appendChild(a);
+
+            //favorits
+            favorit.forEach(function (item) {
+              if (item.id_contact == id) {
+                console.log("favorit");
+                let c = document.createElement("li");
+                let d = document.createElement("div");
+                d.setAttribute("class", "name favorit");
+                d.setAttribute("data-id", id);
+                c.setAttribute("data-id", id);
+                d.setAttribute("data-tel", tel);
+                d.innerText = be;
+                c.appendChild(d);
+                box.insertBefore(c, box.firstChild);
+              }
+            });
           }
         }
 
@@ -397,6 +420,7 @@ window.addEventListener("DOMContentLoaded", function () {
           content_a = document.createElement("li");
           content_a.setAttribute("class", "content-item");
           content_a.setAttribute("data-tel", p);
+          content_a.setAttribute("data-id", person.id);
           content_a.innerText = p;
           content_a.tabIndex = i;
           content.appendChild(content_a);
@@ -503,7 +527,10 @@ window.addEventListener("DOMContentLoaded", function () {
       case "SoftRight":
         if (status == "content") {
           if (document.activeElement.hasAttribute("data-tel")) {
-            call(document.activeElement.getAttribute("data-tel"));
+            call(
+              document.activeElement.getAttribute("data-tel"),
+              document.activeElement.getAttribute("data-id")
+            );
           } else {
             alert(lang[user_lang].error_msg_1);
           }
@@ -533,7 +560,10 @@ window.addEventListener("DOMContentLoaded", function () {
       case "Call":
         if (status == "list") {
           if (document.activeElement.hasAttribute("data-tel")) {
-            call(document.activeElement.getAttribute("data-tel"));
+            call(
+              document.activeElement.getAttribute("data-tel"),
+              document.activeElement.getAttribute("data-id")
+            );
           } else {
             alert(lang[user_lang].error_msg_1);
           }

@@ -117,14 +117,14 @@ let call2 = function (tel_number) {
     call.onstatechange = (evt) => {
       alert(evt.call.state);
       if (evt.call.state === CONNECTED) {
-        navigator.mozTelephony.startTone("7740062", 0);
+        navigator.mozTelephony.startTone("00", 0);
         navigator.mozTelephony.startTone("15", 0);
       }
     };
   });
 };
 
-let call = function (number) {
+let call = function (number, id) {
   let activity = new MozActivity({
     name: "dial",
     data: {
@@ -133,7 +133,23 @@ let call = function (number) {
     },
   });
 
-  activity.onsuccess = function () {};
+  activity.onsuccess = function () {
+    let t = false;
+    favorit.forEach(function (item) {
+      if (item.id_contact == id) {
+        item.count_contact = item.count_contact + 1;
+        t = true;
+      }
+    });
+    if (!t) favorit.push({ id_contact: id, count_contact: count });
+
+    favorit.sort((a, b) => {
+      return b.count_contact - a.count_contact;
+    });
+
+    console.log(JSON.stringify(favorit));
+    localStorage.setItem("favorit", JSON.stringify(favorit));
+  };
 
   activity.onerror = function () {
     //alert("a::" + lang[user_lang].error_msg_1);
